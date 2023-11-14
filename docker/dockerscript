@@ -1,0 +1,33 @@
+#!/bin/bash/
+
+curl -f -s -S -L https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+apt-cache policy docker-ce
+apt install docker-ce
+echo "докер установлен"
+
+mkdir /etc/bitnami/node-exporter
+mkdir /etc/grafana/grafana
+mkdir /etc/prometheus
+cp /home/ubuntu/git/linux.basic2023/prometheus.yml /etc/prometheus/
+echo "файл копирован из git"
+
+docker network create --subnet 10.0.0.0/24 --gateway=10.0.0.1 otus_netw
+echo "подсеть настроенна"
+
+docker run -d -P --name node-exporter -p 9997:9100 --net otus_netw --ip 10.0.0.12 bitnami/node-exporter
+echo "node-exporter установлен"
+
+docker ps -a
+
+docker run -d -P --name prometheus_test -v /etc/prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml -p 9989:9090 --net otus_netw --ip 10.0.0.10 bitnami/prometheus
+echo "Prometheus установлена"
+
+docker ps -a
+
+docker run -d -P --name grafana -p 9998:3000 --net otus_netw --ip 10.0.0.11 grafana/grafana
+echo "grafana установлена"
+
+docker ps -a
+echo "Готово"
+
