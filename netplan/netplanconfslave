@@ -1,0 +1,20 @@
+#!/bin/bash
+# Настройка сети
+cat <<EOL > /etc/netplan/00-installer-config.yaml
+#static-networkd.yaml 
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses: [192.168.1.9/24]
+      routes:
+        - to: default
+          via: 192.168.1.1
+      nameservers:
+        addresses:
+          - 8.8.8.8
+          - 8.8.4.4
+EOL
+netplan apply
