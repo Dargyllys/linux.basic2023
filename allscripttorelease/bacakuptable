@@ -1,0 +1,24 @@
+#!/bin/bash
+
+mkdir /home/ubuntu/backup
+
+USER="root"
+PASSWORD="adm"
+DATABASE="otus"
+BACKUP_DIR="/home/ubuntu/backup"
+
+# Получить список таблиц
+TABLES=$(mysql -u $USER -p$PASSWORD -D$DATABASE -Bse 'show tables')
+
+# Создать резервную копию каждой таблицы
+for TABLE in $TABLES
+do
+  echo "Создаю beckup $TABLE..."
+  mysqldump -u $USER -p$PASSWORD $DATABASE $TABLE > $BACKUP_DIR/${DATABASE}_$TABLE.sql
+done
+
+# получит позицию binlog
+echo "Getting binlog position..."
+mysql -u $USER -p$PASSWORD -e "SHOW MASTER STATUS\G" > $BACKUP_DIR/binlog_position.txt
+
+echo "Бекап завершен"
