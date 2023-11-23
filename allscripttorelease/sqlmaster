@@ -1,0 +1,46 @@
+#!/bin/bash/
+
+apt update -y
+
+# Устанавливаем MySQL
+sudo apt install -y nano mysql-server-8.0
+echo "Mysql 8.0 установленна"
+
+# Изменение bind-address в MySQL
+sed -i 's/bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+
+systemctl enable mysql
+
+# Ставим имя хоста
+sudo hostnamectl set-hostname mysql-master
+
+# Устанавливаем пароль
+mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'caching_sha2_password' BY 'adm';"
+echo "Устанавливаем пароль пользователь "
+
+# Создаём пользователя для реплики
+mysql -uroot -padm -e "CREATE USER repl@'%' IDENTIFIED WITH 'caching_sha2_password' BY 'adm';"
+echo "Создаём пользователя для реплики"
+
+# Даём ему права на репликац
+mysql -uroot -padm -e "GRANT REPLICATION SLAVE ON *.* TO repl@'%';"
+echo "Даём ему права на репликац"
+
+# Сбрасываем кэш привилегий (не обязательно)
+
+mysql -uroot -padm -e "FLUSH PRIVILEGES;"
+echo "Сбрасываем кэш привилегий"
+
+# Закрываем и блокируем все таблицы
+mysql -uroot -padm -e "FLUSH TABLES WITH READ LOCK;"
+echo "Закрываем и блокируем все таблицы"
+
+# Смотрим статус Мастера
+mysql -uroot -padm -e "SHOW MASTER STATUS;"
+echo "Смотрим статус Мастера"
+
+ip a
+
+#reboot
+sudo systemctl restart mysql.service
+echo "reboot"
