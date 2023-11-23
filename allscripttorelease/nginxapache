@@ -1,0 +1,42 @@
+#!/bin/bash
+# переход в директорию /var/www/html
+cd /var/www/html 
+# Копирование готового макета сайта для отображения 
+cp /home/ubuntu/git/linux.basic2023/var/html/index.html /var/www/html/
+echo "html"
+
+# переход в директорию /var/www/html1
+cd /var/www/
+mkdir html1
+cd html1
+cp /home/ubuntu/git/linux.basic2023/var/html1/index.html /var/www/html1/
+echo "html1"
+# переход в директорию /var/www/html2
+cd /var/www/
+mkdir html2
+cd html2
+cp /home/ubuntu/git/linux.basic2023/var/html2/index.html /var/www/html2/
+echo "html2"
+#Переход в папку /etc/nginx/sites-enabled для конфигурирования
+cd /etc/nginx/sites-enabled
+# Копирование готовой конфигурации 
+cp /home/ubuntu/git/linux.basic2023/nginx/new/default  /etc/nginx/sites-enabled
+echo "nginx default"
+#Переход в папку /etc/apache2/sites-enable для конфигурирования
+cd /etc/apache2/sites-enabled
+# Копирование готовой конфигурации
+cp /home/ubuntu/git/linux.basic2023/apache2/new/000-default.conf  /etc/apache2/sites-available
+echo "apache-000-def"
+#Переход в папку /etc/apache2 для конфигурирования
+cd /etc/apache2
+# Копирование готовой конфигурации
+cp /home/ubuntu/git/linux.basic2023/apache2/new/ports.conf  /etc/apache2/
+echo "apache-port"
+#перезапуск вебсервера
+systemctl restart apache2
+echo "restart apache2"
+#Перезапуск вебсервера
+systemctl restart nginx
+echo "restart nginx"
+
+
