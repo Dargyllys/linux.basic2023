@@ -1,0 +1,39 @@
+#!/bin/bash
+ 
+IPT="/sbin/iptables"
+ 
+#flush policy
+$IPT -F
+$IPT -X
+ 
+#default policy
+$IPT -P FORWARD ACCEPT
+$IPT -P OUTPUT ACCEPT
+$IPT -P INPUT DROP
+ 
+#create custom chain
+$IPT -N POLICY
+ 
+# INPUT policy
+$IPT -A INPUT -i lo -j ACCEPT
+ 
+$IPT -A INPUT -s 127.0.0.1 -j ACCEPT
+$IPT -A INPUT -d 127.0.0.1 -j ACCEPT
+ 
+$IPT -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+$IPT -A INPUT -p icmp -j ACCEPT
+ 
+#jump to chain
+$IPT -A INPUT -j POLICY
+ 
+#chain policy
+$IPT -A POLICY -p tcp -m tcp --dport 53 -j ACCEPT
+$IPT -A POLICY -p udp -m udp --dport 53 -j ACCEPT
+$IPT -A POLICY -p tcp -m tcp --dport 22 -j ACCEPT
+$IPT -A POLICY -p tcp -m tcp --dport 80 -j ACCEPT
+$IPT -A POLICY -p tcp -m tcp --dport 443 -j ACCEPT
+$IPT -A POLICY -p tcp -m tcp --dport 33060 -j ACCEPT
+$IPT -A POLICY -p tcp -m tcp --dport 3306 -j ACCEPT
+$IPT -A POLICY -p tcp -m tcp --dport 9997 -j ACCEPT
+$IPT -A POLICY -p tcp -m tcp --dport 9998 -j ACCEPT
+$IPT -A POLICY -p tcp -m tcp --dport 9999 -j ACCEPT
