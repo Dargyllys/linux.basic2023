@@ -1,0 +1,15 @@
+#!/bin/bash
+########################################3
+iptables -L
+iptables -nvL --linenumbers
+#Разрешаем ssh
+iptables -A INPUT -p tcp --dport=22 -j ACCEPT
+#Разрешим любой входящий трафик из localhost и откроем http/https порты (80/443), например для случая когда у нас есть веб-сервер и наши сайты должны быть доступны снаружи:
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+#Разрешим движение трафика из интерфейсов создаваемых Docker (при политиках по умолчанию DROP, контейнеры не смогут общаться с другими интерфейсами):
+sudo iptables -A INPUT -i br+ -j ACCEPT
+sudo iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+#Политика
+sudo iptables -P INPUT DROP
