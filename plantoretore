@@ -1,0 +1,12 @@
+План восстановления
+Подготовка заранее:
+запуск netplanconfmaster на 1й виртуальной машине\
+запуск netplanconfslave на резервной виртуальной машине
+Запуск netplanconfservice на машине для логов и статистики
+установка apache2 b nginx
+Заливка исходников для elk на  slave
+Запуск nginxapache2 для создания и балансировки web-серверов
+Запуск scriptmaster и scriptslave  соответственно на серверах
+Запуск prometheusandgrafanadoker на сервере логов в папке prometheus 
+производим резервное восстановление баз данных
+запуск  elkscript из папки /home/ubuntu на slave
