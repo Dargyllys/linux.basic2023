@@ -1,0 +1,55 @@
+############################################################
+sudo apt update
+sudo apt install default-jdk -y
+echo "jdk ready"
+# Устанавливаем ES
+sudo dpkg -i elasticsearch-8.9.1-amd64.deb
+echo "setup elasticsearch ready"
+# Устанавливаем лимиты памяти для виртуальной машины Java
+cp /home/ubuntu/git/linux.basic2023/elk/elastic/jvm.options /etc/elasticsearch/jvm.options.d/jvm.options 
+echo "setup elasticsearch ready"
+# Конфигурация ES
+cp /home/ubuntu/git/linux.basic2023/elk/elastic/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+echo "setup elasticsearch ready"
+# Старт сервиса
+sudo systemctl daemon-reload
+sudo systemctl enable --now elasticsearch.service
+echo "setup elasticsearch ready"
+# Установка kibana
+dpkg -i kibana-8.9.1-amd64.deb
+echo "setup kibana ready"
+sudo systemctl daemon-reload
+sudo systemctl enable --now kibana.service
+echo "reload kibana ready"
+#конфиг кибаны
+cp /home/ubuntu/git/linux.basic2023/elk/kibana/kibana.yml /etc/kibana/kibana.yml
+echo "config kibana ready"
+systemctl restart kibana
+echo "restart kibana ready"
+# Установка Logstash
+dpkg -i logstash-8.9.1-amd64.deb
+echo "setup logstash ready"
+systemctl enable --now logstash.service
+# logstash config
+cp /home/ubuntu/git/linux.basic2023/elk/logstash/logstash.yml /etc/logstash/logstash.yml
+echo "setup logstash config ready"
+#доп конфиг nginx
+cp /home/ubuntu/git/linux.basic2023/elk/logstash/conf.d/logstash-nginx-es.conf /etc/logstash/conf.d/logstash-nginx-es.conf
+echo "setup nginx config ready"
+systemctl restart logstash.service
+echo "restart logstash server ready"
+# Установка filebeat
+dpkg -i filebeat-8.9.1-amd64.deb 
+echo "setup filebeat ready"
+#конфиг файлбит
+cp /home/ubuntu/git/linux.basic2023/elk/filebeat/filebeat.yml /etc/filebeat/filebeat.yml
+echo "configure filebeat ready"
+systemctl restart filebeat
+echo "restart filebeat ready"
+sudo filebeat modules enable nginx
+echo "load filebeat ready"
+# Metricbeat настройка
+dpkg -i metricbeat-8.9.1-amd64.deb
+echo "setup metricbeat ready"
+systemctl enable --now metricbeat
+echo "metricbeat ready"
